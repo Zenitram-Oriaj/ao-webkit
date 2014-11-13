@@ -1,17 +1,17 @@
 {
-  "name": "agileoffice-finder",
+  "name": "ao-wayfinder",
   "node-main": "app.js",
-  "main": "app/start.html",
+  "main": "app/index.html",
   "single-instance": true,
-  "author": "Justin Rich & Jairo Martinez",
+  "author": "Jairo Martinez",
   "version": "0.0.1",
   "window": {
     "title": "Agile Office Large Display",
     "icon": "app/img/red-elephant.png",
-    "show": false,
-    "toolbar": true,
+    "show": true,
+    "toolbar": false,
     "resizable": false,
-    "fullscreen": false,
+    "fullscreen": true,
     "position": "center",
     "always-on-top": true,
     "show_in_taskbar": true,
@@ -20,9 +20,5 @@
   },
   "webkit": {
     "plugin": true
-  },
-  "dependencies": {
-    "getmac": "^1.0.6",
-    "socket.io": "^1.0.4"
   }
 }

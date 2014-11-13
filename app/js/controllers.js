@@ -96,15 +96,17 @@ app.controller('WorkspaceController', function ($scope, $window, d3Service, work
 
 					} else {
 						d3.xml("floorplan/" + layerName + ".svg", "image/svg+xml", function (xm) {
-							parseXML.parseData(xm.documentElement, function (j) {
-								for (var n in j.g.path) {
-									var ws = {};
-									ws.id = j.g.path[n]._id;
-									ws.state = 0;
-									ws.fill = j.g.path[n]._fill;
-								}
-								console.log(j);
-							});
+							if(xm !== null) {
+								parseXML.parseData(xm.documentElement, function (j) {
+									for (var n in j.g.path) {
+										var ws = {};
+										ws.id = j.g.path[n]._id;
+										ws.state = 0;
+										ws.fill = j.g.path[n]._fill;
+									}
+									console.log(j);
+								});
+							}
 						});
 						// workspace overlays
 
