@@ -61,7 +61,7 @@ app.controller('WorkspaceController', function ($scope, $window, d3Service, work
 	};
 
 	d3Service.d3().then(function (d3) {
-		var layerNames = ["zones", "guides", "areas", "workspaces", "floorplan", "furniture", "text"]; // BOI OFFICE
+		var layerNames = ["zones", "guides", "rooms", "wayfinder", "floorplan", "text", "navigation"]; // SHANGHAI METROPOLIS OFFICE
 
 		d3.xml("floorplan/" + layerNames[0] + ".svg", "image/svg+xml", function (xml) {
 			parseXML.parseData(xml.documentElement, function (d) {
@@ -88,7 +88,7 @@ app.controller('WorkspaceController', function ($scope, $window, d3Service, work
 				var insertLayer = function (svg, layerName) {
 					var layer = svg.append("g").attr("id", layerName);
 
-					if (layerName != "workspaces") {
+					if (layerName != "wayfinder") {
 						// static layers
 						d3.xml("floorplan/" + layerName + ".svg", "image/svg+xml", function (xl) {
 							$("g#" + layerName).append(xl.documentElement);

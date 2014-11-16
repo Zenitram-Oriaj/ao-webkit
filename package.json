@@ -2,16 +2,16 @@
   "name": "ao-wayfinder",
   "node-main": "app.js",
   "main": "app/index.html",
-  "single-instance": true,
   "author": "Jairo Martinez",
   "version": "0.0.1",
   "window": {
-    "title": "Agile Office Large Display",
+    "title": "Agile Office WayFinder",
     "icon": "app/img/red-elephant.png",
-    "show": true,
-    "toolbar": false,
+    "show": false,
+    "toolbar": true,
+    "frame": true,
     "resizable": false,
-    "fullscreen": true,
+    "fullscreen": false,
     "position": "center",
     "always-on-top": true,
     "show_in_taskbar": true,
@@ -19,6 +19,8 @@
     "height": 1080
   },
   "webkit": {
-    "plugin": true
+    "plugin": false,
+    "java": false,
+    "page-cache": false
   }
 }
