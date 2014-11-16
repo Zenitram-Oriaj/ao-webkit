@@ -56,7 +56,7 @@ app.controller('WorkspaceController', function ($scope, $window, d3Service, work
 	};
 
 	d3Service.d3().then(function (d3) {
-		var layerNames = ["zones", "guides", "rooms", "wayfinder", "floorplan", "text", "navigation"]; // SHANGHAI METROPOLIS OFFICE
+		var layerNames = ["zones", "rooms", "wayfinder", "floorplan", "text", "navigation"]; // SHANGHAI METROPOLIS OFFICE
 
 		d3.xml("floorplan/" + layerNames[0] + ".svg", "image/svg+xml", function (xml) {
 			parseXML.parseData(xml.documentElement, function (d) {
