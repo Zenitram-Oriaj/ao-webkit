@@ -284,7 +284,7 @@ app.controller('WeatherController', function ($scope, weatherService) {
 	};
 
 	$scope.getData = function () {
-		var p = weatherService.getLocalData(2245432);
+		var p = weatherService.getLocalData(2151849);
 
 		p.then(
 			function (res) {

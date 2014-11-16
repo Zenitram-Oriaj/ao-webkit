@@ -12,7 +12,16 @@
 	<div class = "widget-foot"></div>
 	<script>
 		(function(){
-			$('#widget-calendar').fullCalendar({});
+			function updateCalendar(){
+				$('#widget-calendar').fullCalendar({});
+			}
+
+			setInterval(function(){
+				updateCalendar()
+			}, 60 * 1000);
+
+			updateCalendar();
+
 		})();
 	</script>
 </div>
