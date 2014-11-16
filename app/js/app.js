@@ -2,7 +2,7 @@
  * Created by digimenet on 7/8/14.
  */
 
-var app = angular.module('app', [ 'ngResource','ngAnimate','ui.bootstrap', 'd3', 'x2js']);
+var app = angular.module('app', ['ngResource','ngAnimate','ui.bootstrap', 'd3', 'x2js']);
 
 app.run(function(){
 	var gui = require('nw.gui');

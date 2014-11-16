@@ -10,16 +10,11 @@
 
  */
 
-app.controller('AppController', function ($scope, $window, Fullscreen, configService) {
+app.controller('AppController', function ($scope, $window, configService) {
 	$scope.sidebar = false;
 	$scope.display = {name: 'Way Finder Display'};
 
 	$scope.gbsLogo = ($window.innerWidth < 500) ? 250 : 600;
-
-	$scope.enableFullscreen = function(){
-		if (Fullscreen.isEnabled()) Fullscreen.cancel();
-		else Fullscreen.all();
-	};
 
 	configService.getData().then(
 		function (res) {
