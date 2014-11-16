@@ -9,8 +9,8 @@ apt-get -y update
 echo '---------------------------------------------'
 echo 'Update completed'
 echo 'Install Additional Software'
-apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser nodejs
-
+apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser nodejs msttcorefonts ttf-mscorefonts-installer
+fc-cache -f -v
 
 ##############################################################
 echo '---------------------------------------------'

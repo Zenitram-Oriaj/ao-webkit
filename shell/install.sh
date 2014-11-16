@@ -9,7 +9,7 @@ apt-get -y update
 echo '---------------------------------------------'
 echo 'Update completed'
 echo 'Install Additional Software'
-apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser
+apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser msttcorefonts ttf-mscorefonts-installer
 
 echo '---------------------------------------------'
 echo 'Add Chris-Lea Node.js Repository'
@@ -32,6 +32,8 @@ cd ao-webkit
 
 echo 'Link Missing Older File To New Version'
 ln -sf /lib/$(arch)-linux-gnu/libudev.so.1 /lib/$(arch)-linux-gnu/libudev.so.0
+fc-cache -f -v
+
 ##############################################################
 echo '---------------------------------------------'
 echo 'Run Application'
