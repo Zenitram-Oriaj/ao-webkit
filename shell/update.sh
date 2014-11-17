@@ -4,12 +4,17 @@
 #
 ##############################################################
 echo '---------------------------------------------'
-echo 'Preform A System Update'
-apt-get -y update
+echo 'Remove Default VNC Server'
+sudo apt-get -y remove vino
+sudo apt-get -y autoremove
+
 echo '---------------------------------------------'
-echo 'Update completed'
+echo 'Preform A System Update'
+sudo apt-get -y update
+
+echo '---------------------------------------------'
 echo 'Install Additional Software'
-apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser nodejs msttcorefonts ttf-mscorefonts-installer
+sudo apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser nodejs x11vnc ttf-mscorefonts-installer
 
 echo '---------------------------------------------'
 echo 'Reset Font Cache'

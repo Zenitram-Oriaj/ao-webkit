@@ -4,18 +4,23 @@
 #
 ##############################################################
 echo '---------------------------------------------'
-echo 'Preform A System Update'
-apt-get -y update
+echo 'Remove Default VNC Server'
+sudo apt-get -y remove vino
+sudo apt-get -y autoremove
+
 echo '---------------------------------------------'
-echo 'Update completed'
+echo 'Preform A System Update'
+sudo apt-get -y update
+
+echo '---------------------------------------------'
 echo 'Install Additional Software'
-apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser msttcorefonts ttf-mscorefonts-installer
+sudo apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser ttf-mscorefonts-installer x11vnc
 
 echo '---------------------------------------------'
 echo 'Add Chris-Lea Node.js Repository'
-add-apt-repository -y ppa:chris-lea/node.js
-apt-get update
-apt-get install -y nodejs
+sudo add-apt-repository -y ppa:chris-lea/node.js
+sudo apt-get update
+sudo apt-get install -y nodejs
 
 ##############################################################
 echo '---------------------------------------------'
@@ -31,7 +36,7 @@ git clone https://github.com/Zenitram-Oriaj/ao-webkit.git
 cd ao-webkit
 
 echo 'Link Missing Older File To New Version'
-ln -sf /lib/$(arch)-linux-gnu/libudev.so.1 /lib/$(arch)-linux-gnu/libudev.so.0
+sudo ln -sf /lib/$(arch)-linux-gnu/libudev.so.1 /lib/$(arch)-linux-gnu/libudev.so.0
 
 echo '---------------------------------------------'
 echo 'Reset Font Cache'
