@@ -52,8 +52,16 @@ gsettings set org.gnome.desktop.session idle-delay 0
 
 ##############################################################
 echo '---------------------------------------------'
+echo 'Copy Files To There Needed Directories'
+cd files
+sudo cp lightdm.conf /etc/lightdm/lightdm.conf
+sudo cp nw.desktop ~/.config/autostart/nw.desktop
+cd ..
+
+##############################################################
+echo '---------------------------------------------'
 echo 'Run Application'
-./nw
+sudo ./nw
 
 ##############################################################
 echo '---------------------------------------------'
