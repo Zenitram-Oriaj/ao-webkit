@@ -55,6 +55,8 @@ echo '---------------------------------------------'
 echo 'Copy Files To There Needed Directories'
 cd files
 sudo cp lightdm.conf /etc/lightdm/lightdm.conf
+
+mkdir ~/.config/autostart
 sudo cp nw.desktop ~/.config/autostart/nw.desktop
 cd ..
 
