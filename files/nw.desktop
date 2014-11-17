@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=/home/ao/ao/ao-webkit/nw
+Exec=/home/roomfinder/ao/ao-webkit/nw
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
