@@ -32,7 +32,18 @@ cd ao-webkit
 
 echo 'Link Missing Older File To New Version'
 ln -sf /lib/$(arch)-linux-gnu/libudev.so.1 /lib/$(arch)-linux-gnu/libudev.so.0
+
+echo '---------------------------------------------'
+echo 'Reset Font Cache'
 fc-cache -f -v
+
+echo '---------------------------------------------'
+echo 'Disable Screen Lock'
+gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
+
+echo '---------------------------------------------'
+echo 'Prevent Screen From Going To Sleep'
+gsettings set org.gnome.desktop.session idle-delay 0
 
 ##############################################################
 echo '---------------------------------------------'
