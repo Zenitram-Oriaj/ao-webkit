@@ -34,20 +34,21 @@ body {
 a {
   color: #00B7FF;
 }
+
 h1, h2, h3, h4, h5, h6, p, em {
   margin: 10px;
 }
 
 h1, h5, h6 {
-  font-family: "Avenir-Black", sans-serif;
+  font-family: "Avenir-Black", 'Ubuntu', sans-serif;
 }
 
 h2, h3, h4 {
-  font-family: "Avenir", sans-serif;
+  font-family: "Avenir", 'Ubuntu', sans-serif;
 }
 
 em {
-  font-family: "Avenir-LightOblique", sans-serif;
+  font-family: "Avenir-LightOblique", 'Ubuntu', sans-serif;
 }
 
 label {
