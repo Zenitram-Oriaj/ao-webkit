@@ -22,8 +22,8 @@ app.controller('AppController', function ($scope, $window, configService) {
 			$scope.port = res.data.port;
 			$scope.dsplyId = res.data.dsplyId;
 		},
-		function (res) {
-			console.log('ERR :: ' + res.data);
+		function (err) {
+			console.log('ERR :: ' + err.data);
 		});
 
 	$scope.hideSidebar = function () {
@@ -94,52 +94,22 @@ app.controller('WorkspaceController', function ($scope, $window, d3Service, work
 							if(xm !== null) {
 								parseXML.parseData(xm.documentElement, function (j) {
 									for (var n in j.g.path) {
-										var ws = {};
-										ws.id = j.g.path[n]._id;
-										ws.state = 0;
-										ws.fill = j.g.path[n]._fill;
+										var wsSVG = {};
+
+										wsSVG = layer.append("polygon")
+											.attr("points", j.g.path[n]._d.replace(/[^0-9,.\s]+/g, '').trim());
+
+										wsSVG
+											.attr("id", j.g.path[n]._id)
+											.attr("fill", available);
+
+										$scope.FlrWorkSpace.push(wsSVG);
 									}
-									console.log(j);
 								});
+							} else {
+								console.log('d3.xml Error');
 							}
 						});
-						// workspace overlays
-
-						workspaceService.collect().then(
-							function (res) {
-								var workspaces = res.data;
-								for (var i = workspaces.length - 1; i >= 0; i--) {
-
-									var wsInfo = workspaces[i];
-									var wsSVG = {};
-
-									switch (wsInfo.svgType) {
-										case 'rect':
-											break;
-										case 'polygon':
-											wsSVG = layer.append("polygon")
-												.attr("points", wsInfo.points);
-											break;
-										case 'path':
-											wsSVG = layer.append("path")
-												.attr("d", wsInfo.points);
-											break;
-										default:
-											break;
-									}
-
-									wsSVG
-										.attr("id", wsInfo.id)
-										.attr("fill", function (d) {
-											return (wsInfo.status == 0) ? available : occupied;
-										});
-
-									$scope.FlrWorkSpace.push(wsSVG);
-								}
-							},
-							function (err) {
-								console.log(err);
-							});
 					}
 				};
 
@@ -215,8 +185,8 @@ app.controller('ScheduleController', function ($scope, $modal, schedule, timelin
 
 				timelineSvc.build($scope.ws);
 			},
-			function (res) {
-				console.log('ERROR :: CAN NOT GET DATA FROM SERVER :: ' + res.data);
+			function (err) {
+				console.log('ERROR :: CAN NOT GET DATA FROM SERVER :: ' + err.data);
 			});
 	};
 
