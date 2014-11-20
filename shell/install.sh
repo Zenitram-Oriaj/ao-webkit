@@ -14,7 +14,7 @@ sudo apt-get -y update
 
 echo '---------------------------------------------'
 echo 'Install Additional Software'
-sudo apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser ttf-mscorefonts-installer x11vnc
+sudo apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser ttf-mscorefonts-installer x11vnc xdotool
 
 echo '---------------------------------------------'
 echo 'Add Chris-Lea Node.js Repository'

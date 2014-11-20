@@ -14,7 +14,7 @@ sudo apt-get -y update
 
 echo '---------------------------------------------'
 echo 'Install Additional Software'
-sudo apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser nodejs x11vnc ttf-mscorefonts-installer
+sudo apt-get -y install python-software-properties openssh-server curl git vsftpd chromium-browser nodejs x11vnc ttf-mscorefonts-installer xdotool
 
 echo '---------------------------------------------'
 echo 'Reset Font Cache'
