@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="1920" height="1080" viewBox="0, 0, 1920, 1080">
+  <g id="workspaces" transform="translate(0, 0)">
+    <path d="M877.278,591.155 L912.839,591.155 L912.839,655.036 L877.278,655.036 z" fill="#FFFFFF" id="01-Huddle_21D_06"/>
+    <path d="M1328,414 L1328,614.5 L1317.5,614.5 L1317.5,654.5 L1328,654.5 L1338,654.5 L1474,654.5 L1474,414 z" fill="#FFFFFF" id="02-Boardroom_21D_03"/>
+    <path d="M947.303,345.188 L1008.719,345.188 L1008.719,410.888 L947.303,410.888 z" fill="#FFFFFF" id="03-Huddle_21C_02"/>
+    <path d="M610.345,691.851 L610.345,764.979 L615.439,764.979 L615.439,789.396 L692.545,789.396 L692.545,691.851 z" fill="#FFFFFF" id="04-VIP_Room_21A_01"/>
+    <path d="M1050.502,591.155 L1157.504,591.155 L1157.504,654.858 L1050.502,654.858 z" fill="#FFFFFF" id="00-VCR" display="none"/>
+    <path d="M946.74,591.155 L1046.753,591.155 L1046.753,655.036 L946.74,655.036 z" fill="#FFFFFF" id="00-VCR" display="none"/>
+  </g>
+</svg>

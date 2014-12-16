@@ -8,6 +8,12 @@
  * https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22greenland%22)%20and%20u%3D'c'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys
  */
 
+app.service('config',function($http){
+	this.getConfig = function(){
+		return $http.get('config.json');
+	};
+});
+
 app.service('parseXML', function (x2jsService) {
 	this.parseData = function (x, cb) {
 		x2jsService.X2JS().then(function (X2JS) {

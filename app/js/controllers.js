@@ -38,8 +38,10 @@ app.controller('AppController', function ($scope, $window, configService) {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // These are children controllers of 'AppController'
 
-app.controller('WorkspaceController', function ($scope, $window, d3Service, workspaceService, parseXML) {
+app.controller('WorkspaceController', function ($scope, $window, d3Service, workspaceService, parseXML, config) {
 	$scope.FlrWorkSpace = [];
+	$scope.floor = {};
+
 	var occupied = "#EE0000";
 	var available = "#00CC00";
 
@@ -55,91 +57,100 @@ app.controller('WorkspaceController', function ($scope, $window, d3Service, work
 		}
 	};
 
-	d3Service.d3().then(function (d3) {
-		var layerNames = ["zones", "rooms", "wayfinder", "floorplan", "text", "navigation"]; // SHANGHAI METROPOLIS OFFICE
+	config.getConfig().then(
+		function(res){
+			$scope.floor = res.data.floor;
 
-		d3.xml("floorplan/" + layerNames[0] + ".svg", "image/svg+xml", function (xml) {
-			parseXML.parseData(xml.documentElement, function (d) {
+			d3Service.d3().then(function (d3) {
+				var layerNames = ["zones", "workspaces", "floorplan", "text_names", "text_nav"]; // SHANGHAI METROPOLIS OFFICE
 
-				var vBxWidth = Math.ceil(d._width);
-				var vBxHeight = Math.ceil(d._height);
-				var ratio = 1.78;
+				d3.xml("floorplan/" + $scope.floor + '/' + layerNames[0] + ".svg", "image/svg+xml", function (xml) {
+					parseXML.parseData(xml.documentElement, function (d) {
 
-				var startX = d._x;
-				var startY = d._y;
-				var width = $("#floorplan-container").width();
-				var height = Math.ceil(width / ratio);
+						var vBxWidth = Math.ceil(d._width);
+						var vBxHeight = Math.ceil(d._height);
+						var ratio = 1.78;
 
-				if (height < 100) height = vBxHeight;
+						var startX = d._x;
+						var startY = d._y;
+						var width = $("#floorplan-container").width();
+						var height = Math.ceil(width / ratio);
 
-				console.log('Width = ' + width + ' :: Height = ' + height + ' :: Ratio = ' + ratio);
+						if (height < 100) height = vBxHeight;
 
-				var svg = d3.select("#floorplan-container")
-					.append("svg")
-					.attr("viewBox", startX.toString() + " " + startY.toString() + " " + vBxWidth.toString() + " " + vBxHeight.toString())
-					.attr("width", width)
-					.attr("height", height);
+						console.log('Width = ' + width + ' :: Height = ' + height + ' :: Ratio = ' + ratio);
 
-				var insertLayer = function (svg, layerName) {
-					var layer = svg.append("g").attr("id", layerName);
+						var svg = d3.select("#floorplan-container")
+							.append("svg")
+							.attr("viewBox", startX.toString() + " " + startY.toString() + " " + vBxWidth.toString() + " " + vBxHeight.toString())
+							.attr("width", width)
+							.attr("height", height);
 
-					if (layerName != "wayfinder") {
-						// static layers
-						d3.xml("floorplan/" + layerName + ".svg", "image/svg+xml", function (xl) {
-							$("g#" + layerName).append(xl.documentElement);
-						});
+						var insertLayer = function (svg, layerName) {
+							var layer = svg.append("g").attr("id", layerName);
 
-					} else {
-						d3.xml("floorplan/" + layerName + ".svg", "image/svg+xml", function (xm) {
-							if(xm !== null) {
-								parseXML.parseData(xm.documentElement, function (j) {
-									for (var n in j.g.path) {
-										var wsSVG = {};
+							if (layerName != "workspaces") {
+								// static layers
+								d3.xml("floorplan/" + $scope.floor + '/' + layerName + ".svg", "image/svg+xml", function (xl) {
+									$("g#" + layerName).append(xl.documentElement);
+								});
 
-										wsSVG = layer.append("polygon")
-											.attr("points", j.g.path[n]._d.replace(/[^0-9,.\s]+/g, '').trim());
+							} else {
+								d3.xml("floorplan/" + $scope.floor + '/' + layerName + ".svg", "image/svg+xml", function (xm) {
+									if(xm !== null) {
+										parseXML.parseData(xm.documentElement, function (j) {
+											for (var n in j.g.path) {
+												var wsSVG = {};
 
-										wsSVG
-											.attr("id", j.g.path[n]._id)
-											.attr("fill", available);
+												wsSVG = layer.append("polygon")
+													.attr("points", j.g.path[n]._d.replace(/[^0-9,.\s]+/g, '').trim());
 
-										$scope.FlrWorkSpace.push(wsSVG);
+												wsSVG
+													.attr("id", j.g.path[n]._id)
+													.attr("fill", available);
+
+												$scope.FlrWorkSpace.push(wsSVG);
+											}
+										});
+									} else {
+										console.log('d3.xml Error');
 									}
 								});
-							} else {
-								console.log('d3.xml Error');
 							}
+						};
+
+						layerNames.forEach(function (layerName) {
+							insertLayer(svg, layerName);
 						});
-					}
-				};
 
-				layerNames.forEach(function (layerName) {
-					insertLayer(svg, layerName);
-				});
+						$window.onresize = function () {
+							var w = $("#floorplan-container").width();
+							var h = Math.ceil(width / ratio);
 
-				$window.onresize = function () {
-					var w = $("#floorplan-container").width();
-					var h = Math.ceil(width / ratio);
-
-					svg.attr("width", w);
-					svg.attr("height", h);
-					$scope.$apply();
-				};
-			});
-
-			setInterval(function () {
-				var p = workspaceService.getWsStatus();
-
-				p.then(
-					function (res) {
-						updateStatus(res.data);
-					},
-					function (err) {
-
+							svg.attr("width", w);
+							svg.attr("height", h);
+							$scope.$apply();
+						};
 					});
-			}, 5000);
-		});
-	});
+
+					setInterval(function () {
+						var p = workspaceService.getWsStatus();
+
+						p.then(
+							function (res) {
+								updateStatus(res.data);
+							},
+							function (err) {
+
+							});
+					}, 5000);
+				});
+			});
+		},
+		function(err){
+			console.log(err);
+		}
+	);
 });
 
 app.controller('ScheduleController', function ($scope, $modal, schedule, timelineSvc) {
