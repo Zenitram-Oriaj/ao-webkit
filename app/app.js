@@ -14,15 +14,16 @@ app.service('wyfdSvc', function ($http) {
 	};
 });
 
-app.controller('AppCtrl', function ($scope, $window, $sce, $interval, $timeout, wyfdSvc) {
+app.controller('NwCtrl', function ($scope, $window, $sce, $interval, $timeout, wyfdSvc) {
 	$scope.wyfd = {
 		ip:         '',
 		port:       0,
 		floorId:    '',
 		locationId: ''
 	};
-	$scope.url = '';
-	$scope.found = false;
+	$scope.url = {};
+	$scope.urlString = 'http://';
+	$scope.infoText = false;
 	$scope.ready = false;
 	$scope.manual = false;
 
@@ -49,6 +50,7 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $interval, $timeout, 
 
 		wyfdSvc.register($scope.wyfd).then(
 			function (res) {
+				$scope.infoText = true;
 				$scope.ready = true;
 				$scope.wyfd.floorId = res.data.floorId;
 				$scope.wyfd.locationId = res.data.locationId;
@@ -62,7 +64,6 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $interval, $timeout, 
 						$timeout(function(){
 							$scope.url = {src: t, title:"WayFinder"};
 							$scope.found = true;
-							console.log($window);
 						},2000);
 					},
 					function(err){
@@ -76,6 +77,21 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $interval, $timeout, 
 			});
 	};
 
+	$scope.manualAddr = function(){
+		wyfdSvc.testUrl($scope.urlString).then(
+			function(res){
+				if(res.status == 200){}
+
+				$timeout(function(){
+					$scope.url = {src: t, title:"WayFinder"};
+					$scope.found = true;
+				},2000);
+			},
+			function(err){
+				console.log(err);
+			});
+	};
+
 	var cnt = 0;
 	var chck = $interval(function () {
 		cnt++;
@@ -85,6 +101,7 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $interval, $timeout, 
 		}
 
 		if(cnt > 20){
+			$scope.infoText = true;
 			$scope.manual = true;
 			$interval.cancel(chck);
 		}
@@ -97,6 +114,7 @@ app.run(function () {
 	var gui = require('nw.gui');
 	var mac = require('getmac');
 	var os = require('os');
+
 	var ifaces = os.networkInterfaces();
 	var ips = [];
 
@@ -117,6 +135,7 @@ app.run(function () {
 			}
 		});
 	});
+
 
 	var tray = new gui.Tray({
 		icon: 'img/red-elephant-16x16.png'

@@ -16,7 +16,7 @@
 	<link rel = 'stylesheet' href = 'css/widget.css'/>
 
 </head>
-<body ng-cloak class = "no-select" ng-controller = "AppCtrl">
+<body ng-cloak class = "no-select" ng-controller = "NwCtrl">
 <div ng-hide="found">
 	<div class = "titlebar">
 		<div class = "row">
@@ -40,7 +40,7 @@
 				<div class = "widget-body">
 					<div class="row">
 						<div class="col-md-12">
-							<div ng-hide="ready">
+							<div ng-hide="infoText">
 								<h4>Please Standby By While Locating The Server</h4>
 							</div>
 							<div ng-show="ready">
@@ -51,7 +51,10 @@
 							<div ng-show="manual">
 								<h4>Server Could Not Be Located Automatically. Please Enter The Server Information Below:</h4>
 								<label for = "srvrUrl">Server Full Url:</label>
-								<input type = "text" id="srvrUrl"/>
+								<input class="form form-control" ng-model="urlString" type = "text" id="srvrUrl"/>
+								<br/>
+								<button class="btn btn-lg btn-primary pull-right" ng-click="manualAddr()">Submit URL</button>
+
 							</div>
 						</div>
 					</div>
