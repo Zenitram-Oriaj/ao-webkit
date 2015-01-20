@@ -1,6 +1,5 @@
 {
   "name": "ao-wayfinder",
-  "node-main": "app.js",
   "main": "app/index.html",
   "author": "Jairo Martinez",
   "version": "0.0.1",
@@ -8,12 +7,12 @@
     "title": "Agile Office WayFinder",
     "icon": "app/img/red-elephant.png",
     "show": false,
-    "toolbar": false,
+    "toolbar": true,
     "frame": true,
-    "resizable": true,
-    "fullscreen": true,
+    "resizable": false,
+    "fullscreen": false,
     "position": "center",
-    "always-on-top": true,
+    "always-on-top": false,
     "show_in_taskbar": true,
     "width": 1920,
     "height": 1080
@@ -22,5 +21,11 @@
     "plugin": false,
     "java": false,
     "page-cache": false
+  },
+  "dependencies": {
+    "async": "*",
+    "mdns": "^2.2.0",
+    "underscore": "^1.7.0",
+    "getmac": "*"
   }
 }

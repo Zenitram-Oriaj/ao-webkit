@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,600,700);*/
 
 @font-face {
   font-family: "Avenir-Black";
@@ -34,7 +34,6 @@ body {
 a {
   color: #00B7FF;
 }
-
 h1, h2, h3, h4, h5, h6, p, em {
   margin: 10px;
 }
@@ -50,6 +49,7 @@ h2, h3, h4 {
 em {
   font-family: "Avenir-LightOblique", 'Ubuntu', sans-serif;
 }
+
 
 label {
   font-weight: 700;
