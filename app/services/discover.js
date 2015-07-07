@@ -25,6 +25,7 @@ discover.on('serviceUp', function (service) {
 	try {
 		if (service.txtRecord && service.txtRecord.wyfd) {
 			window.server = service;
+			console.log(service);
 			window.locating = false;
 			module.exports.emit('server', service);
 		}

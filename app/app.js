@@ -19,11 +19,6 @@ app.service('wyfdSvc', function ($http) {
 });
 
 app.controller('NwCtrl', function ($scope, $window, $sce, $interval, $timeout, wyfdSvc) {
-	$scope.server = {
-		ip:   '',
-		port: 0
-	};
-
 	$scope.url = {};
 	$scope.urlString = 'http://';
 	$scope.infoText = false;
@@ -35,12 +30,12 @@ app.controller('NwCtrl', function ($scope, $window, $sce, $interval, $timeout, w
 	};
 
 	$scope.parseIp = function (obj) {
-		$scope.server.port = parseInt(obj.txtRecord.wyfd, 10);
+		$scope.ao.server.port = parseInt(obj.txtRecord.wyfd, 10);
 		if (obj.addresses && obj.addresses.length > 0) {
 			obj.addresses.forEach(function (o) {
 				var i = o.indexOf('.');
 				if (i > -1) {
-					$scope.server.ip = o;
+					$scope.ao.server.ip = o;
 				}
 			});
 		} else {
@@ -51,14 +46,12 @@ app.controller('NwCtrl', function ($scope, $window, $sce, $interval, $timeout, w
 	$scope.init = function () {
 		$scope.parseIp($window.server);
 
-		wyfdSvc.register($scope.server, $window.wyfd).then(
+		wyfdSvc.register($scope.ao.server, $scope.ao).then(
 			function (res) {
 				$scope.infoText = true;
 				$scope.ready = true;
-				$window.wyfd.floorId = res.data.floorId;
-				$window.wyfd.locationId = res.data.locationId;
 
-				var t = "http://" + $scope.server.ip + ':' + $scope.server.port + '/?floorId=' + $window.wyfd.floorId + '&locationId=' + $window.wyfd.locationId;
+				var t = "http://" + $scope.ao.server.ip + ':' + $scope.ao.server.port + '/?floorId=' + $scope.ao.wayfinder.floorId + '&locationId=' + $scope.ao.wayfinder.locationId;
 
 				wyfdSvc.testUrl(t).then(
 					function (res) {
@@ -87,7 +80,7 @@ app.controller('NwCtrl', function ($scope, $window, $sce, $interval, $timeout, w
 				}
 
 				$timeout(function () {
-					$scope.url = {src: t, title: "WayFinder"};
+					//$scope.url = {src: t, title: "WayFinder"};
 					$scope.found = true;
 				}, 2000);
 			},
@@ -112,43 +105,16 @@ app.controller('NwCtrl', function ($scope, $window, $sce, $interval, $timeout, w
 	}, 500);
 });
 
-app.run(function ($window) {
-	var broadcast = require('./services/broadcast');
-	var discover = require('./services/discover');
+app.run(function ($window, $rootScope) {
+	var fs = require('fs');
+	$rootScope.ao = JSON.parse(fs.readFileSync("./app/config.json"));
+
 	var gui = require('nw.gui');
 	var mac = require('getmac');
 	var os = require('os');
-
-	var ifaces = os.networkInterfaces();
-	var ips = [];
-
-	$window.wyfd = {
-		name:       '',
-		uuid:       '',
-		ips:        '',
-		floorId:    '',
-		locationId: ''
-	};
-
-	Object.keys(ifaces).forEach(function (ifname) {
-		var alias = 0;
-
-		ifaces[ifname].forEach(function (iface) {
-			if ('IPv4' !== iface.family || iface.internal !== false) {
-				return;
-			}
-
-			if (alias >= 1) {
-				console.log(ifname + ':' + alias, iface.address);
-				ips.push(iface.address);
-			} else {
-				console.log(ifname, iface.address);
-				ips.push(iface.address);
-			}
-		});
-
-		$window.wyfd.ips = ips.toString();
-	});
+	var broadcast = require('./services/broadcast');
+	var discover = require('./services/discover');
+	var netCfg = require('./services/netconfig');
 
 	var tray = new gui.Tray({
 		icon: 'img/red-elephant-16x16.png'
@@ -163,6 +129,15 @@ app.run(function ($window) {
 
 		$window.locating = true;
 
+		$rootScope.ao.node.version = process.versions.node;
+		$rootScope.ao.node.v8 = process.versions.v8;
+		$rootScope.ao.node.arch = process.arch;
+		$rootScope.ao.node.pid = process.pid;
+
+		if (process.getuid) {
+			$rootScope.ao.node.uid = process.getuid();
+		}
+
 		mac.getMac(function (err, addr) {
 			if (err) {
 
@@ -172,9 +147,21 @@ app.run(function ($window) {
 				for (var i = 0; i < t.length; i++) {
 					uuid += t[i].toUpperCase();
 				}
-				$window.wyfd.uuid = uuid;
-				$window.wyfd.name = 'WFD' + uuid;
-				broadcast.run($window.wyfd.name, $window.wyfd.uuid, $window.wyfd.ips);
+				$rootScope.ao.wayfinder.uuid = uuid;
+				$rootScope.ao.wayfinder.name = 'WFD' + uuid;
+
+				netCfg.updateConfig($rootScope.ao, function(err,res){
+					var dt = new Date();
+					$rootScope.ao.updatedAt = dt.toISOString();
+					var j = JSON.stringify($rootScope.ao, null, 2);
+					fs.writeFile('./app/config.json', j, function (err) {
+						if (err) {
+							console.log(err);
+						} else {
+
+						}
+					});
+				});
 			}
 		});
 

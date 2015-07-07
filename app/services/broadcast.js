@@ -4,34 +4,35 @@
 var mdns = require('mdns');
 var ad = {};
 
-var txt_record = {
-	desc: 'Way Finder Display Service',
-	path: '/',
-	port: 80,
-	name: '',
-	uuid: '',
-	ips:  ''
-};
-
-function createAdvertisement(name, uuid, ips) {
+function createAdvertisement(cfg) {
 	try {
-		txt_record.name = name;
-		txt_record.uuid = uuid;
-		txt_record.ips = ips.toString();
-		ad = mdns.createAdvertisement(mdns.tcp('http'), txt_record.port, {txtRecord: txt_record});
-		ad.start();
+		var txt_record = {
+			name: obj.wayfinder.name,
+			uuid: obj.wayfinder.uuid,
+			type: 'WFD',
+			desc: 'WayFinder',
+			path: '/',
+			ip:   obj.network.ip,
+			port: 1337
+		};
+
+		ad = mdns.createAdvertisement(mdns.tcp('http'), txt_record.port, {name: 'WayFinder', host: 'Mac.Mini.Main', txtRecord: txt_record});
 		ad.on('error', handleError);
+		ad.start();
 	} catch (ex) {
 		handleError(ex);
 	}
 }
 
 function handleError(error) {
-	console.log(error);
+	console.error(error);
 	switch (error.errorCode) {
 		case mdns.kDNSServiceErr_Unknown:
 		default:
 			console.warn(error);
+			setTimeout(function () {
+				createAdvertisement();
+			}, 5000);
 			break;
 	}
 }
@@ -39,6 +40,6 @@ function handleError(error) {
 module.exports.init = function () {
 };
 
-module.exports.run = function (name, uuid, ips) {
-	createAdvertisement(name, uuid, ips);
+module.exports.run = function (obj) {
+	createAdvertisement(obj);
 };

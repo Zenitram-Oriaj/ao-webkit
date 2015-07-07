@@ -2,7 +2,7 @@
   "name": "ao-wayfinder",
   "main": "app/index.html",
   "author": "Jairo Martinez",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "window": {
     "title": "Agile Office WayFinder",
     "icon": "app/img/red-elephant.png",
@@ -24,8 +24,26 @@
   },
   "dependencies": {
     "async": "*",
+    "getmac": "*",
     "mdns": "^2.2.0",
-    "underscore": "^1.7.0",
-    "getmac": "*"
-  }
+    "netroute": "^0.2.5",
+    "underscore": "^1.7.0"
+  },
+  "description": "Front End Pp For WayFinder Service",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zenitram-Oriaj/ao-webkit.git"
+  },
+  "keywords": [
+    "webkit"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zenitram-Oriaj/ao-webkit/issues"
+  },
+  "homepage": "https://github.com/Zenitram-Oriaj/ao-webkit#readme"
 }
