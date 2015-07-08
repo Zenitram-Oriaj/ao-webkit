@@ -112,9 +112,9 @@ app.run(function ($window, $rootScope) {
 	var gui = require('nw.gui');
 	var mac = require('getmac');
 	var os = require('os');
-	var broadcast = require('./services/broadcast');
-	var discover = require('./services/discover');
-	var netCfg = require('./services/netconfig');
+	//var broadcast = require('./services/broadcast');
+	//var discover = require('./services/discover');
+	//var netCfg = require('./services/netconfig');
 
 	var tray = new gui.Tray({
 		icon: 'img/red-elephant-16x16.png'
@@ -149,7 +149,7 @@ app.run(function ($window, $rootScope) {
 				}
 				$rootScope.ao.wayfinder.uuid = uuid;
 				$rootScope.ao.wayfinder.name = 'WFD' + uuid;
-
+				/*
 				netCfg.updateConfig($rootScope.ao, function(err,res){
 					var dt = new Date();
 					$rootScope.ao.updatedAt = dt.toISOString();
@@ -162,15 +162,17 @@ app.run(function ($window, $rootScope) {
 						}
 					});
 				});
+				*/
 			}
 		});
 
-		discover.run();
+		//discover.run();
 	}
 
+	/*
 	discover.on('error', function (err) {
 		console.log(err);
 	});
-
+	*/
 	init();
 });
