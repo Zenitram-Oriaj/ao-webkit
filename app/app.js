@@ -24,10 +24,21 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data) {
 			function(res){
 				var dat = res.data;
 
+				console.info(dat);
+
 				var a = $scope.ao.server.ip;
 				var b = $scope.ao.server.port;
-				var c = $scope.ao.wayfinder.locationId;
-				var d = $scope.ao.wayfinder.floorId;
+				var c = $scope.ao.locationId;
+				var d = $scope.ao.floorId;
+
+				if(dat.locationId && dat.locationId.length > 0){
+					c = dat.locationId;
+				}
+
+				if(dat.floorId && dat.floorId.length > 0){
+					d = dat.floorId;
+				}
+
 				var url = 'http://' + a + ':' + b +  '/?locationId=' + c + '&floorId=' + d;
 
 				$scope.url = {src: url, title: "WayFinder"};
@@ -75,10 +86,6 @@ app.run(function ($rootScope, $window, browser) {
 	$rootScope.ao.node.arch = process.arch;
 	$rootScope.ao.node.pid = process.pid;
 
-	$rootScope.ao.screen = browser.screen();
-	$rootScope.ao.os = browser.os();
-	$rootScope.ao.browser = browser.detect();
-
 	if (process.getuid) {
 		$rootScope.ao.node.uid = process.getuid();
 	}
@@ -87,14 +94,19 @@ app.run(function ($rootScope, $window, browser) {
 		if (err) {
 			console.error(err);
 		} else {
+
+			$rootScope.ao.network.mac = addr;
+
 			var uuid = '';
 			var t = addr.split(':');
 			for (var i = 0; i < t.length; i++) {
 				uuid += t[i].toUpperCase();
 			}
 
-			$rootScope.ao.wayfinder.uuid = uuid;
-			$rootScope.ao.wayfinder.name = 'WFD' + uuid;
+			$rootScope.ao.os = browser.os();
+
+			$rootScope.ao.uuid = uuid;
+			$rootScope.ao.name = 'WFD' + uuid;
 			$rootScope.ao.updatedAt = new Date();
 
 			var j = JSON.stringify($rootScope.ao, null, 2);

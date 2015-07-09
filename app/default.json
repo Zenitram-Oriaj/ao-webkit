@@ -1,4 +1,9 @@
 {
+  "uuid": "",
+  "name": "",
+  "locationId": "",
+  "floorId": "",
+  "type": "WFD",
   "server": {
     "ip": "",
     "port": 3002
@@ -14,21 +19,9 @@
     "pid": 0,
     "uid": 0
   },
-  "browser": {},
-  "screen": {},
   "os": {},
-  "wayfinder": {
-    "uuid": "",
-    "name": "",
-    "locationId": "",
-    "floorId": "",
-    "type": "WFD"
-  },
   "network": {
     "ip": "",
-    "sub": "",
-    "gw": "",
-    "dns": "",
     "mac": ""
   },
   "updatedAt": ""
