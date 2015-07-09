@@ -7,15 +7,15 @@
     "title": "Agile Office WayFinder",
     "icon": "app/img/red-elephant.png",
     "show": false,
-    "toolbar": true,
+    "toolbar": false,
     "frame": true,
-    "resizable": true,
-    "fullscreen": false,
+    "resizable": false,
+    "fullscreen": true,
     "position": "center",
-    "always-on-top": false,
+    "always-on-top": true,
     "show_in_taskbar": true,
-    "width": 1680,
-    "height": 1050
+    "width": 1920,
+    "height": 1080
   },
   "webkit": {
     "plugin": false,
