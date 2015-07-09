@@ -7,15 +7,15 @@
     "title": "Agile Office WayFinder",
     "icon": "app/img/red-elephant.png",
     "show": false,
-    "toolbar": true,
-    "frame": true,
+    "toolbar": false,
+    "frame": false,
     "resizable": true,
-    "fullscreen": false,
+    "fullscreen": true,
     "position": "center",
-    "always-on-top": false,
+    "always-on-top": true,
     "show_in_taskbar": true,
-    "width": 1024,
-    "height": 768,
+    "width": 1920,
+    "height": 1080,
     "min_width": 1024,
     "min_height": 768,
     "max_width": 1920,
@@ -31,7 +31,7 @@
     "getmac": "^1.0.7",
     "underscore": "^1.7.0"
   },
-  "description": "Front End Pp For WayFinder Service",
+  "description": "Front End App For WayFinder Service",
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -40,9 +40,7 @@
     "type": "git",
     "url": "git+https://github.com/Zenitram-Oriaj/ao-webkit.git"
   },
-  "keywords": [
-    "webkit"
-  ],
+  "keywords": ["webkit"],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Zenitram-Oriaj/ao-webkit/issues"

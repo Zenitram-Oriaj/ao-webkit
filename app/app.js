@@ -53,6 +53,9 @@ app.run(function ($rootScope, $window, browser) {
 
 	console.info($rootScope.ao);
 
+	// process.env.http_proxy = '';
+	// process.env.https_proxy = '';
+
 	var gui = require('nw.gui');
 	var mac = require('getmac');
 	var os = require('os');

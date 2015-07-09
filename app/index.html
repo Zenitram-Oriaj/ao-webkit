@@ -6,18 +6,21 @@
 	<meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1">
 	<meta name = "viewport" content = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<link rel = "stylesheet" href = "libs/bootstrap/dist/css/bootstrap.css"/>
-	<link rel = "stylesheet" href = "libs/fontawesome/css/font-awesome.min.css"/>
 	<link rel = 'stylesheet' href = 'css/app.css'/>
-	<link rel = 'stylesheet' href = 'css/widget.css'/>
 
 	<script src = "libs/jquery/dist/jquery.js"></script>
 	<script src = "libs/angular/angular.js"></script>
 	<script src = "app.js"></script>
 	<script src = "services/browser.js"></script>
+	<script src = "services/splash.js"></script>
 
 </head>
 <body ng-cloak class = "no-select" ng-controller = "AppCtrl">
+
+<splash timeout = "2">
+	<h1>Agile Office - WayFinder</h1>
+	<p>Content And Data Is Now Loading. Please Standby. </p>
+</splash>
 
 </body>
 </html>
