@@ -12,6 +12,7 @@
     "http": "",
     "https": ""
   },
+  "os": {},
   "node": {
     "version": "",
     "v8": "",
@@ -19,7 +20,6 @@
     "pid": 0,
     "uid": 0
   },
-  "os": {},
   "network": {
     "ip": "",
     "mac": ""
