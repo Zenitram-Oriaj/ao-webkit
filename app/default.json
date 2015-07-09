@@ -3,6 +3,10 @@
     "ip": "",
     "port": 3002
   },
+  "proxy": {
+    "http": "",
+    "https": ""
+  },
   "node": {
     "version": "",
     "v8": "",
