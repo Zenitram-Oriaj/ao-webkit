@@ -9,13 +9,13 @@
     "show": false,
     "toolbar": true,
     "frame": true,
-    "resizable": false,
+    "resizable": true,
     "fullscreen": false,
     "position": "center",
     "always-on-top": false,
     "show_in_taskbar": true,
-    "width": 1920,
-    "height": 1080
+    "width": 1680,
+    "height": 1050
   },
   "webkit": {
     "plugin": false,
@@ -23,10 +23,8 @@
     "page-cache": false
   },
   "dependencies": {
-    "async": "*",
-    "getmac": "*",
-    "mdns": "^2.2.0",
-    "netroute": "^0.2.5",
+    "async": "^1.3.0",
+    "getmac": "^1.0.7",
     "underscore": "^1.7.0"
   },
   "description": "Front End Pp For WayFinder Service",
