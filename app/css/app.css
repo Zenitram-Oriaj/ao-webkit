@@ -85,6 +85,24 @@ hr {
   font-size: 26px
 }
 
+/*****************************************/
+/*              JUMBOTRON                */
+/*****************************************/
+
+
+.jumbotron {
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+.jumbotron .btn {
+  padding: 14px 24px;
+  font-size: 21px;
+}
+
+.form-control {
+  height: 45px;
+  font-size: 32px;
+}
 
 /*****************************************/
 /*                 MEDIA                 */
@@ -98,6 +116,13 @@ hr {
 /* Tablets */
 @media (max-width: 767px){
 
+  .container {
+    max-width: 730px;
+  }
+
+  .jumbotron {
+    border-bottom: 0;
+  }
 }
 
 /* Desktops */

@@ -14,8 +14,8 @@ app.service('browser', function () {
 		return $http.get('./myIP');
 	};
 
-	this.params = function () {
-		var str = window.location.search;
+	this.params = function (url) {
+		var str = url || window.location.search;
 		var query = str.substring(str.indexOf('?') + 1).split('&');
 		var params = {};
 		var pair = [];

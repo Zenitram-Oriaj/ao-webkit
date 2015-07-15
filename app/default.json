@@ -1,9 +1,10 @@
 {
   "uuid": "",
   "name": "",
-  "locationId": "",
-  "floorId": "",
+  "locationId": "GBL",
+  "floorId": "GBL",
   "type": "WFD",
+  "url": "http://",
   "server": {
     "ip": "",
     "port": 3002

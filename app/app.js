@@ -1,6 +1,7 @@
 /**
  * Created by Jairo Martinez on 1/16/15.
  */
+var fs = require('fs');
 var app = angular.module('app', []);
 
 app.service('data', function ($http) {
@@ -13,46 +14,83 @@ app.service('data', function ($http) {
 	};
 });
 
-app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data) {
+app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, browser) {
+
+	function parseUrl(url, cb){
+
+		if(url.indexOf('http://') > -1){
+
+		} else {
+			url = 'http://' + url;
+		}
+
+		var parser = document.createElement('a');
+		parser.href = url;
+
+		$scope.ao.server.ip = parser.hostname;
+		$scope.ao.server.port = parseInt(parser.port,10);
+
+		var tmp = parser.search;
+
+		if(tmp.length > 1){
+			var a = browser.params(url);
+			if(a.locationId) $scope.ao.locationId = a.locationId;
+			if(a.floorId) $scope.ao.floorId = a.floorId;
+		}
+
+		var j = JSON.stringify($scope.ao, null, 2);
+		fs.writeFile('app/config.json', j, function (err) {
+			if (err) {
+				console.error(err);
+				cb(err,null);
+			} else {
+				cb(null,'OK');
+			}
+		});
+	}
 
 	$scope.trustSrc = function (src) {
 		return $sce.trustAsResourceUrl(src);
 	};
 
 	$timeout(function () {
-		data.register($scope.ao.server,$scope.ao).then(
-			function(res){
+		data.register($scope.ao.server, $scope.ao).then(
+			function (res) {
 				var dat = res.data;
 
-				console.info(dat);
+				console.log(dat);
 
-				var a = $scope.ao.server.ip;
-				var b = $scope.ao.server.port;
-				var c = $scope.ao.locationId;
-				var d = $scope.ao.floorId;
-
-				if(dat.locationId && dat.locationId.length > 0){
-					c = dat.locationId;
-				}
-
-				if(dat.floorId && dat.floorId.length > 0){
-					d = dat.floorId;
-				}
-
-				var url = 'http://' + a + ':' + b +  '/?locationId=' + c + '&floorId=' + d;
-
-				$scope.url = {src: url, title: "WayFinder"};
-				$window.location.href = url;
+				$scope.url = {src: $scope.ao.url, title: "WayFinder"};
+				$window.location.href = $scope.ao.url;
 			},
-			function(err){
+			function (err) {
 
 			}
 		);
 	}, 1000);
+
+	$scope.connect = function(){
+		$scope.url = {src: $scope.ao.url, title: "WayFinder"};
+
+		data.testUrl($scope.ao.url).then(
+			function(res){
+				parseUrl($scope.ao.url, function(err,res){
+					if(err){
+						$window.alert('Failed To Parse The Provided URL');
+					} else {
+						console.info(res);
+						$window.location.href = $scope.ao.url;
+					}
+				});
+			},
+			function(err){
+				$window.alert('Failed To Connect To The Provided URL');
+			});
+
+	}
 });
 
 app.run(function ($rootScope, $window, browser) {
-	var fs = require('fs');
 	$rootScope.ao = {};
 
 	try {
@@ -61,8 +99,6 @@ app.run(function ($rootScope, $window, browser) {
 	catch (err) {
 		$rootScope.ao = JSON.parse(fs.readFileSync("app/default.json"));
 	}
-
-	console.info($rootScope.ao);
 
 	// process.env.http_proxy = '';
 	// process.env.https_proxy = '';
@@ -80,6 +116,7 @@ app.run(function ($rootScope, $window, browser) {
 	console.log('Starting Node Services');
 
 	$window.locating = true;
+	$rootScope.ao.url = "http://";
 
 	$rootScope.ao.node.version = process.versions.node;
 	$rootScope.ao.node.v8 = process.versions.v8;
@@ -108,6 +145,22 @@ app.run(function ($rootScope, $window, browser) {
 			$rootScope.ao.uuid = uuid;
 			$rootScope.ao.name = 'WFD' + uuid;
 			$rootScope.ao.updatedAt = new Date();
+
+			if ($rootScope.ao.server.ip != '') {
+				$rootScope.ao.url += $rootScope.ao.server.ip;
+
+				if ($rootScope.ao.server.port) {
+					$rootScope.ao.url += ':';
+					$rootScope.ao.url += $rootScope.ao.server.port;
+				}
+
+				if ($rootScope.ao.locationId != '' && $rootScope.ao.floorId != '') {
+					$rootScope.ao.url += '/?locationId=';
+					$rootScope.ao.url += $rootScope.ao.locationId;
+					$rootScope.ao.url += '&floorId=';
+					$rootScope.ao.url += $rootScope.ao.floorId;
+				}
+			}
 
 			var j = JSON.stringify($rootScope.ao, null, 2);
 			fs.writeFile('app/config.json', j, function (err) {
