@@ -3,6 +3,28 @@
 #
 #
 ##############################################################
+
+PROXY="$1"
+
+
+if [ "$PROXY" == "EU" ]; then
+	export http_proxy='http://zeuproxy.eu.pg.com:9400'
+	export https_proxy='http://zeuproxy.eu.pg.com:9400'
+	export no_proxy='localaddress,127.0.0.1,155.123.247.140,155.123.247.139'
+	export HTTP_PROXY='http://zeuproxy.eu.pg.com:9400'
+	export HTTPS_PROXY='http://zeuproxy.eu.pg.com:9400'
+	export NO_PROXY='localaddress,127.0.0.1,155.123.247.140,155.123.247.139'
+fi
+
+if [ "$PROXY" == "NA" ]; then
+	export http_proxy='http://autoproxy.pg.com:8080'
+	export https_proxy='http://autoproxy.pg.com:8080'
+	export no_proxy='localaddress,127.0.0.1,155.*,155'
+	export HTTP_PROXY='http://autoproxy.pg.com:8080'
+	export HTTPS_PROXY='http://autoproxy.pg.com:8080'
+	export NO_PROXY='localaddress,127.0.0.1,155.*,155'
+fi
+
 echo '---------------------------------------------'
 echo 'Remove Default VNC Server'
 sudo apt-get -y remove vino
@@ -14,13 +36,17 @@ sudo apt-get -y update
 
 echo '---------------------------------------------'
 echo 'Install Additional Software'
-sudo apt-get -y install python-software-properties software-properties-common openssh-server curl git vsftpd x11vnc xdotool libavahi-compat-libdnssd-dev sysstat atsar screen
+sudo apt-get -y install python-software-properties software-properties-common openssh-server curl apt-transport-httpsgit vsftpd x11vnc xdotool libavahi-compat-libdnssd-dev sysstat atsar screen
 
 echo '---------------------------------------------'
 echo 'Add Chris-Lea Node.js Repository'
-sudo add-apt-repository -y ppa:chris-lea/node.js
-sudo apt-get update
-sudo apt-get install --force-y -y nodejs
+sudo su
+curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+echo 'deb https://deb.nodesource.com/node_0.10 utopic main' > /etc/apt/sources.list.d/nodesource.list
+echo 'deb-src https://deb.nodesource.com/node_0.10 utopic main' >> /etc/apt/sources.list.d/nodesource.list
+apt-get update
+apt-get install nodejs -y
+exit
 
 ##############################################################
 echo '---------------------------------------------'
@@ -40,11 +66,17 @@ tar -zxvf nwjs-v0.12.2-linux-ia32.tar.gz
 
 echo '---------------------------------------------'
 echo 'Install Modules'
+
+if [ PROXY == 1 ]; then
+	npm config set proxy http://zeuproxy.eu.pg.com:9400
+	npm config set https-proxy http://zeuproxy.eu.pg.com:9400
+fi
+
 npm install
 
-echo '---------------------------------------------'
-echo 'Link Missing Older File To New Version'
-sudo ln -sf /lib/$(arch)-linux-gnu/libudev.so.1 /lib/$(arch)-linux-gnu/libudev.so.0
+#echo '---------------------------------------------'
+#echo 'Link Missing Older File To New Version'
+#sudo ln -sf /lib/$(arch)-linux-gnu/libudev.so.1 /lib/$(arch)-linux-gnu/libudev.so.0
 
 echo '---------------------------------------------'
 echo 'Reset Font Cache'

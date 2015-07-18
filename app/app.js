@@ -104,6 +104,7 @@ app.run(function ($rootScope, $window, browser) {
 	var gui = require('nw.gui');
 	var mac = require('getmac');
 	var os = require('os');
+	var net = require('./services/netconfig');
 
 	var tray = new gui.Tray({
 		icon: 'img/red-elephant-16x16.png'
@@ -123,6 +124,18 @@ app.run(function ($rootScope, $window, browser) {
 
 	if (process.getuid) {
 		$rootScope.ao.node.uid = process.getuid();
+	}
+
+	$rootScope.ao.network = net.init();
+
+	if($rootScope.ao.network && $rootScope.ao.network.ip.indexOf('155.') > -1){
+		process.env.http_proxy = 'http://zeuproxy.eu.pg.com:9400';
+		process.env.https_proxy = 'http://zeuproxy.eu.pg.com:9400';
+		process.env.no_proxy= 'localaddress,127.0.0.1,155.123.247.140,155.123.247.139';
+	}
+
+	if(os.type() == 'Linux'){
+		console.info(os.networkInterfaces());
 	}
 
 	mac.getMac(function (err, addr) {
