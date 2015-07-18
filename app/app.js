@@ -15,36 +15,34 @@ app.service('data', function ($http) {
 });
 
 app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, browser) {
+	function parseUrl(url, cb) {
 
-	function parseUrl(url, cb){
-
-		if(url.indexOf('http://') > -1){
+		if (url.indexOf('http://') > -1) {
 
 		} else {
 			url = 'http://' + url;
 		}
 
-		var parser = document.createElement('a');
-		parser.href = url;
+		var parser = new URL(url);
 
 		$scope.ao.server.ip = parser.hostname;
-		$scope.ao.server.port = parseInt(parser.port,10);
+		$scope.ao.server.port = parseInt(parser.port, 10);
 
 		var tmp = parser.search;
 
-		if(tmp.length > 1){
+		if (tmp.length > 1) {
 			var a = browser.params(url);
-			if(a.locationId) $scope.ao.locationId = a.locationId;
-			if(a.floorId) $scope.ao.floorId = a.floorId;
+			if (a.locationId) $scope.ao.locationId = a.locationId;
+			if (a.floorId) $scope.ao.floorId = a.floorId;
 		}
 
 		var j = JSON.stringify($scope.ao, null, 2);
 		fs.writeFile('app/config.json', j, function (err) {
 			if (err) {
 				console.error(err);
-				cb(err,null);
+				cb(err, null);
 			} else {
-				cb(null,'OK');
+				cb(null, 'OK');
 			}
 		});
 	}
@@ -69,13 +67,13 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 		);
 	}, 1000);
 
-	$scope.connect = function(){
+	$scope.connect = function () {
 		$scope.url = {src: $scope.ao.url, title: "WayFinder"};
 
 		data.testUrl($scope.ao.url).then(
-			function(res){
-				parseUrl($scope.ao.url, function(err,res){
-					if(err){
+			function (res) {
+				parseUrl($scope.ao.url, function (err, res) {
+					if (err) {
 						$window.alert('Failed To Parse The Provided URL');
 					} else {
 						console.info(res);
@@ -83,7 +81,7 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 					}
 				});
 			},
-			function(err){
+			function (err) {
 				$window.alert('Failed To Connect To The Provided URL');
 			});
 
