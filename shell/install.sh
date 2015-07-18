@@ -4,10 +4,8 @@
 #
 ##############################################################
 
-PROXY="$1"
-
-
-if [ "$PROXY" == "EU" ]; then
+if [ "$1" = "EU" ]; then
+	echo 'Setting Up for PG Europe Proxy'
 	export http_proxy='http://zeuproxy.eu.pg.com:9400'
 	export https_proxy='http://zeuproxy.eu.pg.com:9400'
 	export no_proxy='localaddress,127.0.0.1,155.123.247.140,155.123.247.139'
@@ -16,7 +14,8 @@ if [ "$PROXY" == "EU" ]; then
 	export NO_PROXY='localaddress,127.0.0.1,155.123.247.140,155.123.247.139'
 fi
 
-if [ "$PROXY" == "NA" ]; then
+if [ "$1" = "NA" ]; then
+echo 'Setting Up for PG North America Proxy'
 	export http_proxy='http://autoproxy.pg.com:8080'
 	export https_proxy='http://autoproxy.pg.com:8080'
 	export no_proxy='localaddress,127.0.0.1,155.*,155'
@@ -39,7 +38,7 @@ echo 'Install Additional Software'
 sudo apt-get -y install python-software-properties software-properties-common openssh-server curl apt-transport-httpsgit vsftpd x11vnc xdotool libavahi-compat-libdnssd-dev sysstat atsar screen
 
 echo '---------------------------------------------'
-echo 'Add Chris-Lea Node.js Repository'
+echo 'Add Debian Node.js Repository'
 sudo su
 curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 echo 'deb https://deb.nodesource.com/node_0.10 utopic main' > /etc/apt/sources.list.d/nodesource.list
@@ -67,10 +66,18 @@ tar -zxvf nwjs-v0.12.2-linux-ia32.tar.gz
 echo '---------------------------------------------'
 echo 'Install Modules'
 
-if [ PROXY == 1 ]; then
+if [ "$1" = "EU" ]; then
+	echo 'Setting NPM for PG Europe Proxy'
 	npm config set proxy http://zeuproxy.eu.pg.com:9400
 	npm config set https-proxy http://zeuproxy.eu.pg.com:9400
 fi
+
+if [ "$1" = "NA" ]; then
+	echo 'Setting NPM for PG North America Proxy'
+	npm config set proxy http://autoproxy.pg.com:8080
+	npm config set https-proxy http://autoproxy.pg.com:8080
+fi
+
 
 npm install
 
