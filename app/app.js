@@ -51,14 +51,6 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 	};
 
 	$timeout(function () {
-
-		if($scope.ao.network && $scope.ao.network.ip.indexOf('155.') > -1){
-			process.env.http_proxy = 'http://zeuproxy.eu.pg.com:9400';
-			process.env.https_proxy = 'http://zeuproxy.eu.pg.com:9400';
-			process.env.no_proxy= 'localaddress,127.0.0.1,155.123.247.140,155.123.247.139';
-			$scope.gui.App.setProxyConfig('zeuproxy.eu.pg.com:9400');
-		}
-
 		if($scope.ao.url && $scope.ao.url.length > 10){
 
 			$scope.url = {src: $scope.ao.url, title: "WayFinder"};
@@ -91,12 +83,24 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 						$window.alert('Failed To Parse The Provided URL');
 					} else {
 						console.info(res);
-						$window.location.href = $scope.ao.url;
+						data.register($scope.ao.server, $scope.ao).then(
+							function (res) {
+								var dat = res.data;
+
+								console.log(dat);
+
+								$window.location.href = $scope.ao.url;
+							},
+							function (err) {
+								console.error(err);
+								$window.alert('Failed To Register :: ' + err.statusText);
+							}
+						);
 					}
 				});
 			},
 			function (err) {
-				$window.alert('Failed To Connect To The Provided URL');
+				$window.alert('Failed To Connect To The Provided URL :: ' +  err.statusText);
 			});
 	}
 });
