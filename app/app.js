@@ -6,7 +6,7 @@ var app = angular.module('app', []);
 
 app.service('data', function ($http) {
 	this.register = function (server, wd) {
-		return $http.post('http://' + server.ip + ':' + server.port + '/register', wd);
+		return $http.post('http://' + server.ip + ':' + server.port + '/api/register', wd);
 	};
 
 	this.testUrl = function (url) {
@@ -15,36 +15,35 @@ app.service('data', function ($http) {
 });
 
 app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, browser) {
+
 	function parseUrl(url, cb) {
+		try {
+			if (url.indexOf('http://') > -1) {
 
-		if (url.indexOf('http://') > -1) {
-
-		} else {
-			url = 'http://' + url;
-		}
-
-		var parser = new URL(url);
-
-		$scope.ao.server.ip = parser.hostname;
-		$scope.ao.server.port = parseInt(parser.port, 10);
-
-		var tmp = parser.search;
-
-		if (tmp.length > 1) {
-			var a = browser.params(url);
-			if (a.locationId) $scope.ao.locationId = a.locationId;
-			if (a.floorId) $scope.ao.floorId = a.floorId;
-		}
-
-		var j = JSON.stringify($scope.ao, null, 2);
-		fs.writeFile('app/config.json', j, function (err) {
-			if (err) {
-				console.error(err);
-				cb(err, null);
 			} else {
-				cb(null, 'OK');
+				url = 'http://' + url;
 			}
-		});
+
+			var parser = new URL(url);
+
+			$scope.ao.server.ip = parser.hostname;
+			$scope.ao.server.port = parseInt(parser.port, 10);
+
+			var tmp = parser.search;
+
+			if (tmp.length > 1) {
+				var a = browser.params(url);
+				if (a.locationId) $scope.ao.locationId = a.locationId;
+				if (a.floorId) $scope.ao.floorId = a.floorId;
+			}
+
+			var j = JSON.stringify($scope.ao, null, 2);
+			fs.writeFileSync('app/config.json', j);
+			cb(null,'ok');
+		}
+		catch(e){
+			cb(e,null);
+		}
 	}
 
 	$scope.trustSrc = function (src) {
@@ -52,26 +51,41 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 	};
 
 	$timeout(function () {
-		data.register($scope.ao.server, $scope.ao).then(
-			function (res) {
-				var dat = res.data;
 
-				console.log(dat);
+		if($scope.ao.network && $scope.ao.network.ip.indexOf('155.') > -1){
+			process.env.http_proxy = 'http://zeuproxy.eu.pg.com:9400';
+			process.env.https_proxy = 'http://zeuproxy.eu.pg.com:9400';
+			process.env.no_proxy= 'localaddress,127.0.0.1,155.123.247.140,155.123.247.139';
+			$scope.gui.App.setProxyConfig('zeuproxy.eu.pg.com:9400');
+		}
 
-				$scope.url = {src: $scope.ao.url, title: "WayFinder"};
-				$window.location.href = $scope.ao.url;
-			},
-			function (err) {
+		if($scope.ao.url && $scope.ao.url.length > 10){
 
-			}
-		);
-	}, 1000);
+			$scope.url = {src: $scope.ao.url, title: "WayFinder"};
+			$scope.trustSrc($scope.ao.url);
+
+			data.register($scope.ao.server, $scope.ao).then(
+				function (res) {
+					var dat = res.data;
+
+					console.log(dat);
+
+					$window.location.href = $scope.ao.url;
+				},
+				function (err) {
+					console.error(err);
+					$window.alert('Failed To Register :: ' + err.statusText);
+				}
+			);
+		}
+	}, 2000);
 
 	$scope.connect = function () {
 		$scope.url = {src: $scope.ao.url, title: "WayFinder"};
 
 		data.testUrl($scope.ao.url).then(
 			function (res) {
+				$scope.trustSrc($scope.ao.url);
 				parseUrl($scope.ao.url, function (err, res) {
 					if (err) {
 						$window.alert('Failed To Parse The Provided URL');
@@ -84,7 +98,6 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 			function (err) {
 				$window.alert('Failed To Connect To The Provided URL');
 			});
-
 	}
 });
 
@@ -112,6 +125,8 @@ app.run(function ($rootScope, $window, browser) {
 
 	gui.Window.get().show();
 
+	$rootScope.gui = gui;
+
 	console.log('Starting Node Services');
 
 	$window.locating = true;
@@ -128,11 +143,6 @@ app.run(function ($rootScope, $window, browser) {
 
 	$rootScope.ao.network = net.init();
 
-	if($rootScope.ao.network && $rootScope.ao.network.ip.indexOf('155.') > -1){
-		process.env.http_proxy = 'http://zeuproxy.eu.pg.com:9400';
-		process.env.https_proxy = 'http://zeuproxy.eu.pg.com:9400';
-		process.env.no_proxy= 'localaddress,127.0.0.1,155.123.247.140,155.123.247.139';
-	}
 
 	if(os.type() == 'Linux'){
 		console.info(os.networkInterfaces());
@@ -174,11 +184,7 @@ app.run(function ($rootScope, $window, browser) {
 			}
 
 			var j = JSON.stringify($rootScope.ao, null, 2);
-			fs.writeFile('app/config.json', j, function (err) {
-				if (err) {
-					console.error(err);
-				}
-			});
+			fs.writeFileSync('app/config.json', j);
 		}
 	});
 });
