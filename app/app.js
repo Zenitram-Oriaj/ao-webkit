@@ -160,7 +160,14 @@ app.run(function ($rootScope, $window, browser) {
 			$rootScope.ao.network.mac = addr;
 
 			var uuid = '';
-			var t = addr.split(':');
+			var t = [];
+			if(addr.indexOf(':') > -1){
+				t = addr.split(':');
+			}
+			else if(addr.indexOf('-') > -1){
+				t = addr.split('-');
+			}
+
 			for (var i = 0; i < t.length; i++) {
 				uuid += t[i].toUpperCase();
 			}
