@@ -21,38 +21,35 @@ app.service('data', function ($http, $sce) {
 	this.trustSrc = function (src) {
 		return $sce.trustAsResourceUrl(src);
 	};
+});
 
-	this.parseUrl = function (ao, cb) {
-		var url = ao.url;
+app.controller('AppCtrl', function ($scope, $window, browser, data) {
+
+	var parseUrl = function (cb) {
+		var url = $scope.ao.url;
 		try {
-			if (url.indexOf('http://') > -1) {
 
-			} else {
+			if (url.indexOf('http://') == -1) {
 				url = 'http://' + url;
 			}
 
-			var parser = new URL(url);
+			var uri = new URL(url);
+			$scope.ao.server.ip = uri.hostname;
+			$scope.ao.server.port = parseInt(uri.port, 10);
 
-			ao.server.ip = parser.hostname;
-			ao.server.port = parseInt(parser.port, 10);
-
-			var tmp = parser.search;
+			var tmp = uri.search;
 
 			if (tmp.length > 1) {
 				var a = browser.params(url);
-				if (a.locationId) ao.locationId = a.locationId;
-				if (a.floorId) ao.floorId = a.floorId;
+				if (a.locationId) $scope.ao.locationId = a.locationId;
+				if (a.floorId) $scope.ao.floorId = a.floorId;
 			}
-
-			cb(null, ao);
+			cb(null);
 		}
-		catch (e) {
-			cb(e, ao);
+		catch (ex) {
+			cb(ex);
 		}
-	}
-});
-
-app.controller('AppCtrl', function ($scope, $window, data) {
+	};
 
 	$scope.connect = function () {
 		$scope.url = {src: $scope.ao.url, title: "WayFinder"};
@@ -60,16 +57,20 @@ app.controller('AppCtrl', function ($scope, $window, data) {
 		data.testUrl($scope.ao.url).then(
 			function (tmp) {
 				data.trustSrc($scope.ao.url);
-				data.parseUrl($scope.ao, function (err, res) {
+				parseUrl(function (err) {
 					if (err) {
-						$window.alert('Failed To Parse The Provided URL');
+						console.error(err);
+						var e = JSON.stringify(err, null, 2);
+						$window.alert('Error Occurred :: ' + e);
 					} else {
+						try{
+							var j = JSON.stringify($scope.ao, null, 2);
+							fs.writeFileSync('app/config.json', j);
+						}
+						catch(ex){
+							$window.alert('Failed To Save Config File');
+						}
 
-						$scope.ao = res;
-						var j = JSON.stringify(res, null, 2);
-						fs.writeFileSync('app/config.json', j);
-
-						console.info(res);
 						data.register($scope.ao.server, $scope.ao).then(
 							function (res) {
 								var dat = res.data;
