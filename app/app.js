@@ -1,10 +1,15 @@
 /**
  * Created by Jairo Martinez on 1/16/15.
  */
+
 var fs = require('fs');
 var app = angular.module('app', []);
+var gui = require('nw.gui');
+var mac = require('getmac');
+var os = require('os');
+var net = require('./services/netconfig');
 
-app.service('data', function ($http) {
+app.service('data', function ($http, $sce) {
 	this.register = function (server, wd) {
 		return $http.post('http://' + server.ip + ':' + server.port + '/api/register', wd);
 	};
@@ -12,11 +17,13 @@ app.service('data', function ($http) {
 	this.testUrl = function (url) {
 		return $http.get(url);
 	};
-});
 
-app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, browser) {
+	this.trustSrc = function (src) {
+		return $sce.trustAsResourceUrl(src);
+	};
 
-	function parseUrl(url, cb) {
+	this.parseUrl = function (ao, cb) {
+		var url = ao.url;
 		try {
 			if (url.indexOf('http://') > -1) {
 
@@ -26,62 +33,42 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 
 			var parser = new URL(url);
 
-			$scope.ao.server.ip = parser.hostname;
-			$scope.ao.server.port = parseInt(parser.port, 10);
+			ao.server.ip = parser.hostname;
+			ao.server.port = parseInt(parser.port, 10);
 
 			var tmp = parser.search;
 
 			if (tmp.length > 1) {
 				var a = browser.params(url);
-				if (a.locationId) $scope.ao.locationId = a.locationId;
-				if (a.floorId) $scope.ao.floorId = a.floorId;
+				if (a.locationId) ao.locationId = a.locationId;
+				if (a.floorId) ao.floorId = a.floorId;
 			}
 
-			var j = JSON.stringify($scope.ao, null, 2);
-			fs.writeFileSync('app/config.json', j);
-			cb(null,'ok');
+			cb(null, ao);
 		}
-		catch(e){
-			cb(e,null);
+		catch (e) {
+			cb(e, ao);
 		}
 	}
+});
 
-	$scope.trustSrc = function (src) {
-		return $sce.trustAsResourceUrl(src);
-	};
-
-	$timeout(function () {
-		if($scope.ao.url && $scope.ao.url.length > 10){
-
-			$scope.url = {src: $scope.ao.url, title: "WayFinder"};
-			$scope.trustSrc($scope.ao.url);
-
-			data.register($scope.ao.server, $scope.ao).then(
-				function (res) {
-					var dat = res.data;
-
-					console.log(dat);
-
-					$window.location.href = $scope.ao.url;
-				},
-				function (err) {
-					console.error(err);
-					$window.alert('Failed To Register :: ' + err.statusText);
-				}
-			);
-		}
-	}, 2000);
+app.controller('AppCtrl', function ($scope, $window, data) {
 
 	$scope.connect = function () {
 		$scope.url = {src: $scope.ao.url, title: "WayFinder"};
 
 		data.testUrl($scope.ao.url).then(
-			function (res) {
+			function (tmp) {
 				$scope.trustSrc($scope.ao.url);
-				parseUrl($scope.ao.url, function (err, res) {
+				data.parseUrl($scope.ao, function (err, res) {
 					if (err) {
 						$window.alert('Failed To Parse The Provided URL');
 					} else {
+
+						$scope.ao = res;
+						var j = JSON.stringify(res, null, 2);
+						fs.writeFileSync('app/config.json', j);
+
 						console.info(res);
 						data.register($scope.ao.server, $scope.ao).then(
 							function (res) {
@@ -100,12 +87,12 @@ app.controller('AppCtrl', function ($scope, $window, $sce, $timeout, data, brows
 				});
 			},
 			function (err) {
-				$window.alert('Failed To Connect To The Provided URL :: ' +  err.statusText);
+				$window.alert('Failed To Connect To The Provided URL :: ' + err.statusText);
 			});
 	}
 });
 
-app.run(function ($rootScope, $window, browser) {
+app.run(function ($rootScope, $window, browser, data) {
 	$rootScope.ao = {};
 
 	try {
@@ -114,14 +101,6 @@ app.run(function ($rootScope, $window, browser) {
 	catch (err) {
 		$rootScope.ao = JSON.parse(fs.readFileSync("app/default.json"));
 	}
-
-	// process.env.http_proxy = '';
-	// process.env.https_proxy = '';
-
-	var gui = require('nw.gui');
-	var mac = require('getmac');
-	var os = require('os');
-	var net = require('./services/netconfig');
 
 	var tray = new gui.Tray({
 		icon: 'img/red-elephant-16x16.png'
@@ -147,8 +126,7 @@ app.run(function ($rootScope, $window, browser) {
 
 	$rootScope.ao.network = net.init();
 
-
-	if(os.type() == 'Linux'){
+	if (os.type() == 'Linux') {
 		console.info(os.networkInterfaces());
 	}
 
@@ -161,10 +139,10 @@ app.run(function ($rootScope, $window, browser) {
 
 			var uuid = '';
 			var t = [];
-			if(addr.indexOf(':') > -1){
+			if (addr.indexOf(':') > -1) {
 				t = addr.split(':');
 			}
-			else if(addr.indexOf('-') > -1){
+			else if (addr.indexOf('-') > -1) {
 				t = addr.split('-');
 			}
 
@@ -196,6 +174,22 @@ app.run(function ($rootScope, $window, browser) {
 
 			var j = JSON.stringify($rootScope.ao, null, 2);
 			fs.writeFileSync('app/config.json', j);
+
+			if ($rootScope.ao.url && $rootScope.ao.url.length > 10) {
+
+				$rootScope.url = {src: $rootScope.ao.url, title: "WayFinder"};
+				data.trustSrc($rootScope.ao.url);
+
+				data.register($rootScope.ao.server, $rootScope.ao).then(
+					function (res) {
+						$window.location.href = $rootScope.ao.url;
+					},
+					function (err) {
+						console.error(err);
+						$window.alert('Failed To Register :: ' + err.statusText);
+					}
+				);
+			}
 		}
 	});
 });
