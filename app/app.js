@@ -59,7 +59,7 @@ app.controller('AppCtrl', function ($scope, $window, data) {
 
 		data.testUrl($scope.ao.url).then(
 			function (tmp) {
-				$scope.trustSrc($scope.ao.url);
+				data.trustSrc($scope.ao.url);
 				data.parseUrl($scope.ao, function (err, res) {
 					if (err) {
 						$window.alert('Failed To Parse The Provided URL');
